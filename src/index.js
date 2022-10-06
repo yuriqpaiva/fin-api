@@ -98,6 +98,21 @@ app.post('/withdraw', verifyIfAccountCPFExists, (request, response) => {
   return response.status(201).send();
 });
 
+app.get('/statement/date', verifyIfAccountCPFExists, (request, response) => {
+  const { customer } = request;
+  const { date } = request.query;
+
+  const dateFormat = new Date(date + ' 00:00');
+
+  const statement = customer.statement.filter(
+    (statement) =>
+      // toDateString method ignores hours
+      statement.created_at.toDateString() === dateFormat.toDateString()
+  );
+
+  return response.json(statement);
+});
+
 app.listen(3333, () => {
   console.log('Listening...');
 });
